@@ -1,6 +1,7 @@
 
 
-
+Run "npm run db-init" to initialize database
+Run "npm run start" to run the server
 
 Used localhost:3002
 I added an orders array to every users in database-initializer.js
