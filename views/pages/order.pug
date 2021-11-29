@@ -1,0 +1,20 @@
+html 
+    head 
+        title Order Summary
+
+    body
+        include ../partials/userHeader
+        h3 Order Summary 
+        br
+        p Owner: #{order.who}
+        p Restaurant: #{order.restaurantName}
+        ul
+            each v, k in order.order
+                - let item = order.order[k];
+                li #{item.name} x #{item.quantity}
+        p Order Summary 
+        ul 
+            li Subtotal: $#{order.subtotal}
+            li Delivery Fee: $#{order.fee}
+            li Tax: $#{order.tax}
+            li Total: $#{order.total}

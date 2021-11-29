@@ -1,0 +1,12 @@
+html 
+    head 
+        title Registration Page
+
+    body 
+        include ../partials/generalHeader
+        h3 Please enter your Username and Password
+        
+        p UserName: #[input#newUsername(type="text", placeholder="slimshady789")] 
+        p Password: #[input#newPassword(type="password")]
+        button(type="button", onclick="register()") Register
+    script(src="js/signupin.js")

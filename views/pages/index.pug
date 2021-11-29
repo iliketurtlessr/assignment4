@@ -1,0 +1,13 @@
+html 
+    head 
+        title Home Page
+
+    body 
+        if user
+            include ../partials/userHeader
+            br
+            h2 Welcome #{user.username}
+        else
+            include ../partials/generalHeader
+            br
+            h2 Welcome to Home Page

@@ -1,0 +1,23 @@
+{
+  "name": "a4-data",
+  "version": "1.0.0",
+  "description": "assignment 4, the last one :(",
+  "main": "database-initializer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node database-initializer.js && node server.js",
+    "dev": "nodemon server.js -e js,json,pug"
+  },
+  "author": "siddharth",
+  "license": "ISC",
+  "dependencies": {
+    "connect-mongodb-session": "^3.1.1",
+    "express": "^4.17.1",
+    "express-session": "^1.17.2",
+    "mongodb": "^4.2.0",
+    "pug": "^3.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}

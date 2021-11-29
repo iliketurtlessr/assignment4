@@ -1,0 +1,28 @@
+html 
+    head 
+        title User Profile
+
+    body
+        include ../partials/userHeader
+        h3 #{userToDisplay.username}'s profile
+        br
+        h5 Order history
+        if userToDisplay.orders.length === 0
+            p No orders yet. Order something to view here
+        else 
+            ul
+                each oid in userToDisplay.orders
+                    li: a(href=`http://localhost:3002/orders/${oid}`) #{oid}
+        
+        if ownPage
+            - let p = (user.privacy? 'Private': 'Public');
+            p Current privacy setting: #{p}
+            input#private(type="radio", name="user_privacy") 
+            label(for="private") Private
+            input#public(type="radio", name="user_privacy") 
+            label(for="public") Public
+            br
+            button(type="submit", onclick="update()") Save
+    
+    script!= `const ownPage = ${JSON.stringify(ownPage)};`
+    script(src="../js/user.js") 

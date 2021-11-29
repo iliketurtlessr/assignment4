@@ -1,0 +1,28 @@
+html 
+    head 
+        title Home Page
+
+    body 
+        if user
+            include ../partials/userHeader
+        else
+            include ../partials/generalHeader
+        p Name #[input#query(type="text")]
+        button(type="button", onclick="submit()") Search
+        h4 Users
+        #results
+    
+    script.
+        function submit() {
+            let name = document.getElementById('query').value;
+            let req = new XMLHttpRequest();
+            req.onreadystatechange = function() {
+                if (req.readyState === 4 && req.status === 200) {
+                    document.getElementById('results').innerHTML = this.responseText;
+                }
+            };
+            req.open("POST", `http://localhost:3002/users?${name}`);
+            req.setRequestHeader("Content-Type", "application/json");
+            req.send(JSON.stringify({name}));
+        }
+        
