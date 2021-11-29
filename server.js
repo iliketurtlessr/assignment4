@@ -4,6 +4,11 @@ const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const app = express();
 
+// Importing Routers
+let usersRouter = require('./routers/users-router');
+let ordersRouter = require('./routers/order-router');
+let registrationRouter = require('./routers/registration-router');
+
 //Database variables
 let mongo = require('mongodb');
 let MongoClient = mongo.MongoClient;
@@ -19,7 +24,6 @@ const store = new MongoDBStore({
     collection: 'mySessions',
     databaseName: 'a4'
 });
-// Catch errors
 store.on('error', error => console.log(error));
 
 // Setting middleware
@@ -52,43 +56,26 @@ function loginStatus(req) {
 }
 
 
-// **************** Routers ****************
-// Users router
-let usersRouter = require('./users-router');
-app.use('/users', usersRouter);
-
-// Order router
-let ordersRouter = require('./order-router');
-app.use('/orders', ordersRouter);
-
-// Registration router
-let registrationRouter = require('./registration-router');
-app.use("/registration", registrationRouter);
-
-
 // **************** ROUTES ****************
+// Expose session
+app.use(function(req, res, next){
+    res.locals.user = req.session.user;
+    next();
+});
+
 // Send Homepage
-app.get(["/", "/home", "/login"], sendIndex);
+app.get(["/", "/home", "/login"], (req, res)=> res.render("pages/index"));
 
 // Login and logout routes
-// app.post("/login", express.json(), login, sendIndex);
 app.post("/login", express.json(), login);
-app.get("/logout", logout, sendIndex);
+app.get("/logout", logout);
 
 // Send orderform page
 app.get("/order", sendOrderForm);
 
-/**
- * Send Homepage
- */
-function sendIndex(req, res, next) {
-    //if user is logged in, send index with user's header
-    // if (req.session.loggedIn) res.render("pages/index", {user: req.session.user});
-    // else res.render("pages/index", {user: false});
-    res.render("pages/index", {
-        user: (req.session.loggedIn ? req.session.user : false)
-    });
-}
+app.use('/users', usersRouter);                 //users router
+app.use('/orders', ordersRouter);               //orders router
+app.use("/registration", registrationRouter);   //registration router
 
 /**
  * Log in user
@@ -124,49 +111,6 @@ function sendIndex(req, res, next) {
     req.session.loggedIn = true;
     req.session.user = user;
     res.sendStatus(200);
-
-    // // Get session
-    // let session = await req.app.locals.db.collection('sessions').findOne({
-    //     who: user.username
-    // });
-
-    // // Add/Update session
-    // (session ? updateSession(req, true) : createSession(req));
-
-    // next();
-}
-
-/**
- * Creates a new session for the user who has logged in for the first time
- */
-async function createSession(req) {
-
-     // Create new session and add to 'sessions' collection
-     let session = await req.app.locals.db.collection('sessions').insertOne({
-        who: req.session.user.username,
-        loggedIn: true,
-        user: req.session.user._id,   // reference to user's ObjectId
-        numOfTimesLoggedIn: 1    // just for fun
-    });
-
-    console.log("new session", session);
-}
-
-/**
- * Updates the login status of this session
- * @param {Boolean} loginStatus to be login status of this user
- */
-async function updateSession(req, loginStatus) {
-
-    // Get and update session
-    let session =  await req.app.locals.db.collection('sessions').updateOne({
-        who: req.session.user.username
-    }, { 
-        "$set": {loggedIn: loginStatus},
-        "$inc": {numOfTimesLoggedIn: (loginStatus? 1: 0)} //update this as well
-    });
-    console.log("updated session", session);
-    
 }
 
 /**
@@ -178,15 +122,13 @@ async function logout(req, res, next) {
             .send("You aren't logged in yet.\nGo login first lol");
         return;
     }
-    
-    // Update session
-    // updateSession(req, false);
 
-    // Update local session information
+    // Remove session data
     req.session.loggedIn = false;
     req.session.user = undefined;
 
-    next();
+    // Redirect to home page
+    res.redirect("/");
 }
 
 /**
@@ -199,9 +141,7 @@ function sendOrderForm(req, res, next) {
         res.status(403).send("You need to login first.");
         return;
     }
-    res.render("pages/orderform", {
-        user: req.session.user
-    });
+    res.render("pages/orderform");
 }
 
 
