@@ -54,15 +54,15 @@ function loginStatus(req) {
 
 // **************** Routers ****************
 // Users router
-let usersRouter = require('./users-router');
+let usersRouter = require('./routers/users-router');
 app.use('/users', usersRouter);
 
 // Order router
-let ordersRouter = require('./order-router');
+let ordersRouter = require('./routers/order-router');
 app.use('/orders', ordersRouter);
 
 // Registration router
-let registrationRouter = require('./registration-router');
+let registrationRouter = require('./routers/registration-router');
 app.use("/registration", registrationRouter);
 
 
