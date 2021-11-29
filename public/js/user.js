@@ -1,6 +1,6 @@
 console.log(ownPage);
 if (ownPage) {
-    if (ownPage.privacy) document.getElementById('private').checked = true;
+    if (user.privacy) document.getElementById('private').checked = true;
     else document.getElementById('public').checked = true;
 }
 function update() {
