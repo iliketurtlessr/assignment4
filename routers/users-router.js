@@ -87,7 +87,6 @@ async function questionUser(req, res, next) {
         req.session.user = await req.app.locals.db.collection('users').findOne({
             _id: req.app.locals.mongo.ObjectId(req.session.user._id)
         });
-        console.log("after", req.session.user);
         res.ownPage = true;
         next();
     }

@@ -68,7 +68,7 @@ app.get(["/", "/home", "/login"], (req, res)=> res.render("pages/index"));
 
 // Login and logout routes
 app.post("/login", express.json(), login);
-app.get("/logout", logout, sendIndex);
+app.get("/logout", logout);
 
 // Send orderform page
 app.get("/order", sendOrderForm);
