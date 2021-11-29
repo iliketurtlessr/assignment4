@@ -126,7 +126,6 @@ async function logout(req, res, next) {
     // Remove session data
     req.session.loggedIn = false;
     req.session.user = undefined;
-    delete res.locals.session;
 
     // Redirect to home page
     res.redirect("/");
