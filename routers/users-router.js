@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 // Send user query page
-router.get("/", sendUserQueryPage);
+router.get("/", (req, res) => res.render("pages/userQuery"));
 
 // Send users with matching query
 router.post("/?", express.json(), queryUsers, sendUsers);
@@ -12,15 +12,6 @@ router.get("/:uid", getUser, questionUser, sendUser);
 
 // Change privacy of user
 router.put("/:uid", express.json(), updatePrivacy);
-
-/**
- * Send page to let client request query
- */
-function sendUserQueryPage(req, res) {
-    res.render("pages/userQuery", {
-        user: req.session.user,
-    });
-}
 
 /**
  * Query database for users as requested
@@ -120,8 +111,7 @@ async function questionUser(req, res, next) {
  */
 function sendUser(req, res, next) {
     res.render("pages/user", {
-        user: req.session.user,
-        ownPage: res.ownPage ? req.session.user : false,
+        ownPage: res.ownPage ? true : false,
         userToDisplay: res.requestedUser,
     });
 }

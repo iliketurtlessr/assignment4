@@ -86,7 +86,6 @@ async function getOrder(req, res, next) {
  */
 function sendOrder(req, res, next) {
     res.render("pages/order", {
-        user: req.session.user,
         order: res.order
     });
 }
