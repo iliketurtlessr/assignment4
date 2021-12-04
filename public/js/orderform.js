@@ -15,21 +15,18 @@ function submitOrder(){
 	info.order = order;
 	
 	req = new XMLHttpRequest();
+	req.open("POST", `http://localhost:3000/orders`);
+	req.setRequestHeader("Content-Type", "application/json");
+	req.send(JSON.stringify(info));
 	req.onreadystatechange = function() {
-		if(this.readyState==4 && this.status==201){
+		if(this.readyState === 4 && this.status === 201){
 			alert("Order placed!")
 			console.log(this.responseText);
 			order = {}
 			selectRestaurant();
 		}
 	}
-	
-	req.open("POST", `http://localhost:3000/orders`);
-	req.setRequestHeader("Content-Type", "application/json");
-	req.send(JSON.stringify(info));
 }
-
-
 
 
 let aragorn = {

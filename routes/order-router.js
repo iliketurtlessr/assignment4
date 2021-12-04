@@ -29,7 +29,7 @@ async function addOrder(req, res, next) {
                 { username: req.session.user.username },
                 { "$push": {orders: order.insertedId}
             });
-    console.log(user, order);
+    console.log(order);
     res.sendStatus(201);
 }
 

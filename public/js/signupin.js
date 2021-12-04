@@ -10,19 +10,19 @@ function register() {
     }
     
     let req = new XMLHttpRequest();
-    req.onreadystatechange = function() {
-        if (req.readyState === 4 && req.status === 201) {
-            let oid = JSON.parse(this.responseText)
-            alert("Registration Successful!");
-            window.location.href = `http://localhost:3000/users/${oid}`;
-        }
-        if (req.readyState === 4 &&  req.status === 400) {           
-            alert(this.responseText);
-        }
-    };
     req.open("POST", `http://localhost:3000/registration`);
     req.setRequestHeader("Content-Type", "application/json");
     req.send(JSON.stringify(user));
+    req.onreadystatechange = function() {
+        if (this.readyState === 4) {
+            if (this.status === 201) {
+                let oid = JSON.parse(this.responseText)
+                alert("Registration Successful!");
+                window.location.href = `http://localhost:3000/users/${oid}`;
+            }
+            if (this.status === 400) alert(this.responseText);
+        }
+    };
 }
 
 /**
@@ -36,15 +36,15 @@ function login() {
     }
     
     let req = new XMLHttpRequest();
-    req.onreadystatechange = function() {
-        if (req.readyState === 4 && req.status === 200) {
-            window.location.href = `http://localhost:3000/`;
-        }
-        if (req.readyState === 4 && (req.status === 400 || req.status === 404)) {
-            alert(this.responseText);
-        }
-    };
     req.open("POST", `http://localhost:3000/login`);
     req.setRequestHeader("Content-Type", "application/json");
     req.send(JSON.stringify(user));
+    req.onreadystatechange = function() {
+        if (this.readyState === 4) {
+            if (this.status === 200) 
+                window.location.href = `http://localhost:3000/`;
+            if (this.status === 400 || this.status === 404)
+                alert(this.responseText);
+        }
+    };
 }

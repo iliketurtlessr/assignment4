@@ -28,7 +28,6 @@ async function queryUsers(req, res, next) {
     res.users = users;
     next();
     console.log(users.length);
-    // users.forEach(user => console.log(user.username, user.privacy));
 }
 
 /**
@@ -79,9 +78,7 @@ async function questionUser(req, res, next) {
     // We can assume that a user is currently logged in
     let user = res.requestedUser;
 
-    //maybe: i still dont understand this logic
     // User wants to view their own profile
-    // console.log("before", req.session.user);
     if (req.session.user.username === user.username) {
         // update local user and send user info with ability to change user privacy
         req.session.user = await req.app.locals.db.collection('users').findOne({
@@ -94,8 +91,8 @@ async function questionUser(req, res, next) {
     if (user.privacy) {
         if (req.session.user.username !== user.username) {
             //the current user is not the holder of acc requested
-            res.status(403).send("Sorry, can't view this user"+ 
-                "Thay have set their profile to private");
+            res.status(403).send("Sorry, can't view this user. "+ 
+                "They have set their profile to private");
             return;
         }
     } else {

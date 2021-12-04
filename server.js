@@ -5,9 +5,9 @@ const MongoDBStore = require('connect-mongodb-session')(session);
 const app = express();
 
 // Importing Routers
-let usersRouter = require('./routers/users-router');
-let ordersRouter = require('./routers/order-router');
-let registrationRouter = require('./routers/registration-router');
+let usersRouter = require('./routes/users-router');
+let ordersRouter = require('./routes/order-router');
+let registrationRouter = require('./routes/registration-router');
 
 //Database variables
 let mongo = require('mongodb');
@@ -29,7 +29,7 @@ store.on('error', error => console.log(error));
 // Setting middleware
 app.set("view engine", "pug");
 app.use(express.static("public"));
-app.use(express.static("views/images"));
+app.use(express.static("public/images"));
 app.use(express.urlencoded({extended: true}));
 app.use(session({
     secret: 'This is a secret',
@@ -134,7 +134,6 @@ async function logout(req, res, next) {
 /**
  * Send order form
  * Couldn't think of a way to include this in ordersRouter
- * ps. suggestions appreciated :)
  */
 function sendOrderForm(req, res, next) {
     if (!req.session.loggedIn) {
@@ -148,12 +147,10 @@ function sendOrderForm(req, res, next) {
 // Initialize database connection
 MongoClient.connect("mongodb://localhost:27017/", function (err, client) {
     if (err) throw err;
-
-    //Get the a4 database
+        
+    //Save our info in app.locals to access from routers
     app.locals.db = client.db('a4');
     app.locals.PORT = PORT;
-
-    //Save our info in app.locals to access from routers
     app.locals.mongo = mongo;
 
     //Start server once Mongo is initialized
