@@ -1,4 +1,4 @@
-const PORT = 3002;
+const PORT = 3000;
 const express = require('express');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);

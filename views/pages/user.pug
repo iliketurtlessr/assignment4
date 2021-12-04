@@ -12,7 +12,7 @@ html
         else 
             ul
                 each oid in userToDisplay.orders
-                    li: a(href=`http://localhost:3002/orders/${oid}`) #{oid}
+                    li: a(href=`http://localhost:3000/orders/${oid}`) #{oid}
         
         if ownPage
             - let p = (user.privacy? 'Private': 'Public');

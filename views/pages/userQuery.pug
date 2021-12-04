@@ -21,7 +21,7 @@ html
                     document.getElementById('results').innerHTML = this.responseText;
                 }
             };
-            req.open("POST", `http://localhost:3002/users?${name}`);
+            req.open("POST", `http://localhost:3000/users?${name}`);
             req.setRequestHeader("Content-Type", "application/json");
             req.send(JSON.stringify({name}));
         }

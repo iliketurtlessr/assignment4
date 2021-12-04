@@ -24,7 +24,7 @@ function submitOrder(){
 		}
 	}
 	
-	req.open("POST", `http://localhost:3002/orders`);
+	req.open("POST", `http://localhost:3000/orders`);
 	req.setRequestHeader("Content-Type", "application/json");
 	req.send(JSON.stringify(info));
 }

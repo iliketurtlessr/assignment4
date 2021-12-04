@@ -14,13 +14,13 @@ function register() {
         if (req.readyState === 4 && req.status === 201) {
             let oid = JSON.parse(this.responseText)
             alert("Registration Successful!");
-            window.location.href = `http://localhost:3002/users/${oid}`;
+            window.location.href = `http://localhost:3000/users/${oid}`;
         }
         if (req.readyState === 4 &&  req.status === 400) {           
             alert(this.responseText);
         }
     };
-    req.open("POST", `http://localhost:3002/registration`);
+    req.open("POST", `http://localhost:3000/registration`);
     req.setRequestHeader("Content-Type", "application/json");
     req.send(JSON.stringify(user));
 }
@@ -38,13 +38,13 @@ function login() {
     let req = new XMLHttpRequest();
     req.onreadystatechange = function() {
         if (req.readyState === 4 && req.status === 200) {
-            window.location.href = `http://localhost:3002/`;
+            window.location.href = `http://localhost:3000/`;
         }
         if (req.readyState === 4 && (req.status === 400 || req.status === 404)) {
             alert(this.responseText);
         }
     };
-    req.open("POST", `http://localhost:3002/login`);
+    req.open("POST", `http://localhost:3000/login`);
     req.setRequestHeader("Content-Type", "application/json");
     req.send(JSON.stringify(user));
 }
