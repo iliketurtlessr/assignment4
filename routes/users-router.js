@@ -17,7 +17,7 @@ router.put("/:uid", express.json(), updatePrivacy);
  * Query database for users as requested
  */
 async function queryUsers(req, res, next) {
-    let name = req.body.name;
+    let name = req.query.name;
     let users = await req.app.locals.db
         .collection("users")
         .find({
