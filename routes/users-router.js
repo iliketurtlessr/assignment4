@@ -46,10 +46,8 @@ function sendUsers(req, res, next) {
  */
 async function getUser(req, res, next) {
     // No user is logged in right now
-    if (!req.session.loggedIn) {
-        res.status(403).send("You need to login first");
-        return;
-    }
+    if (!req.session.loggedIn) 
+        return res.status(403).send("You need to login first");
 
     // Try getting user
     let uid, user;
@@ -62,10 +60,7 @@ async function getUser(req, res, next) {
     user = await req.app.locals.db.collection("users").findOne({ _id: uid });
 
     // No account was found
-    if (!user) {
-        res.status(404).send(`No account.`);
-        return;
-    }
+    if (!user) return res.status(404).send(`No account.`);
 
     res.requestedUser = user;
     next();
@@ -79,17 +74,13 @@ async function questionUser(req, res, next) {
     let user = res.requestedUser;
 
     // User wants to view their own profile
-    if (req.session.user.username === user.username) {
-        // update local user and send user info with ability to change user privacy
-        req.session.user = await req.app.locals.db.collection('users').findOne({
-            _id: req.app.locals.mongo.ObjectId(req.session.user._id)
-        });
+    if (req.session.userId.toString() === user._id.toString()) {
         res.ownPage = true;
         next();
     }
 
     if (user.privacy) {
-        if (req.session.user.username !== user.username) {
+        if (req.session.userId.toString() !== user._id.toString()) {
             //the current user is not the holder of acc requested
             res.status(403).send("Sorry, can't view this user. "+ 
                 "They have set their profile to private");
@@ -117,32 +108,21 @@ function sendUser(req, res, next) {
  */
 async function updatePrivacy(req, res, next) {
     // Respond to a false request
-    if (!req.session.loggedIn) {
-        res.status(403).send("You need to login first.");
-        return;
-    }
-
+    if (!req.session.loggedIn) 
+        return res.status(403).send("You need to login first.");
+    
     // Unauthorized request
-    if (req.params.uid !== req.session.user._id.toString()) {
-        res.sendStatus(403);
-        return;
-    }
-
+    if (req.params.uid !== req.session.userId.toString())
+        return res.sendStatus(403);
+    
     // Update in the database
-    // console.log(req.session);
-    user = await req.app.locals.db
+    await req.app.locals.db
         .collection("users")
         .findOneAndUpdate(
-            { _id: req.session.user._id },
+            { _id: req.session.userId },
             { $set: { privacy: req.body.privacy } }
         );
-    console.log(user);
-
-    // Update user locally as well
-    req.session.user = await req.app.locals.db.collection("users").findOne({
-        _id: user.value._id,
-    });
-    // console.log(user, req.body);
+        
     res.sendStatus(200);
 }
 

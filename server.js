@@ -34,25 +34,21 @@ app.use(express.urlencoded({extended: true}));
 app.use(session({
     secret: "The quick brown fox jumps over a lazy dog",
     store: store,
-    cookie: {
-        maxAge: 1000*60*60*24,  // 1 day
-    },
     resave: true,
-    saveUninitialized: true,
+    saveUninitialized: false,
 }));
 
 app.use(function(req, res, next) {
     console.log("****************");
     console.log(req.method, req.url, "by", req.sessionID);
-    console.log(req.session);
-    // console.log(loginStatus(req));
+    console.log(loginStatus(req));
     next();
 });
 function loginStatus(req) {
     return (
         "Login status: " + 
         (req.session.loggedIn
-            ? `${req.session.user.username} logged in`
+            ? `${req.session.userId.toString()} logged in`
             : "no one logged in")
     );
 }
@@ -66,12 +62,11 @@ app.use(async function(req, res, next){
         res.locals.user = await req.app.locals.db.collection('users').findOne({
             _id: req.session.userId
         });
-    console.log(res.locals);
     next();
 });
 
 // Send Homepage
-app.get(["/", "/home", "/login"], (req, res)=> res.render("pages/index"));
+app.get(["/", "/home"], (req, res)=> res.render("pages/index"));
 
 // Login and logout routes
 app.post("/login", express.json(), login);
@@ -109,7 +104,6 @@ app.use("/registration", registrationRouter);   //registration router
     if (req.body.password !== user.password)
         return res.status(400).send("Uh oh! Wrong password. Try again");
 
-    // console.log(user);
     // All went well. Add user to local session
     req.session.loggedIn = true;
     req.session.userId = user._id;
@@ -125,9 +119,9 @@ async function logout(req, res, next) {
             .status(200)
             .send("You aren't logged in yet.\nGo login first lol");
 
-    // Destroy session data
-    delete req.session.loggedIn;
-    delete req.session.userId;
+    // Remove session data
+    req.session.loggedIn = false;
+    req.session.userId = undefined;
 
     // Redirect to home page
     res.redirect("/");
@@ -135,7 +129,6 @@ async function logout(req, res, next) {
 
 /**
  * Send order form
- * Couldn't think of a way to include this in ordersRouter
  */
 function sendOrderForm(req, res, next) {
     if (!req.session.loggedIn)

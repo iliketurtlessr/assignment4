@@ -4,5 +4,6 @@ html
 
     body 
         include ../partials/header
-        br
+        if user
+            p Hello #{user.username}
         h2 Welcome to Home Page
