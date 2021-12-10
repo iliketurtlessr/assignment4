@@ -34,14 +34,18 @@ app.use(express.urlencoded({extended: true}));
 app.use(session({
     secret: "The quick brown fox jumps over a lazy dog",
     store: store,
+    cookie: {
+        maxAge: 1000*60*60*24,  // 1 day
+    },
     resave: true,
-    saveUninitialized: true
+    saveUninitialized: true,
 }));
 
 app.use(function(req, res, next) {
     console.log("****************");
     console.log(req.method, req.url, "by", req.sessionID);
-    console.log(loginStatus(req));
+    console.log(req.session);
+    // console.log(loginStatus(req));
     next();
 });
 function loginStatus(req) {
@@ -57,8 +61,12 @@ function loginStatus(req) {
 /*                                 ROUTES                                     */  
 /******************************************************************************/
 // Expose session
-app.use(function(req, res, next){
-    res.locals.user = req.session.user;
+app.use(async function(req, res, next){
+    if (req.session.loggedIn)
+        res.locals.user = await req.app.locals.db.collection('users').findOne({
+            _id: req.session.userId
+        });
+    console.log(res.locals);
     next();
 });
 
@@ -101,9 +109,10 @@ app.use("/registration", registrationRouter);   //registration router
     if (req.body.password !== user.password)
         return res.status(400).send("Uh oh! Wrong password. Try again");
 
+    // console.log(user);
     // All went well. Add user to local session
     req.session.loggedIn = true;
-    req.session.user = user;
+    req.session.userId = user._id;
     res.sendStatus(200);
 }
 
@@ -116,9 +125,9 @@ async function logout(req, res, next) {
             .status(200)
             .send("You aren't logged in yet.\nGo login first lol");
 
-    // Remove session data
-    req.session.loggedIn = false;
-    req.session.user = undefined;
+    // Destroy session data
+    delete req.session.loggedIn;
+    delete req.session.userId;
 
     // Redirect to home page
     res.redirect("/");
