@@ -24,6 +24,8 @@ function submitOrder(){
 			console.log(this.responseText);
 			order = {}
 			selectRestaurant();
+			window.location
+				.href = `http://localhost:3000/orders/${this.responseText}`
 		}
 	}
 }

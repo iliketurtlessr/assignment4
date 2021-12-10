@@ -30,7 +30,8 @@ async function addOrder(req, res, next) {
                 { "$push": {orders: order.insertedId}
             });
     console.log(order);
-    res.sendStatus(201);
+    // Send the new order's Mongo ObjectId
+    res.status(201).send(order.insertedId.toString());
 }
 
 /**
