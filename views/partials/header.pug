@@ -1,0 +1,27 @@
+//- partial for header
+span.header
+    a(href="/") Home
+    |
+    |
+    a(href="/users") Users 
+    |
+    |
+    if user
+        //- user specific header
+        a(href="/order") Order Form
+        |
+        |
+        a(href=`/users/${user._id}`) UserProfile
+        |
+        |
+        a(style={"padding-left": "40px"}, href="/logout") Logout
+    else
+        //- header extension - general
+        a(href="/registration") Register
+        |
+        |
+        span.
+            Username: #[input#username(type="text", placeholder="slimshady789")] 
+            Password: #[input#password(type="password")]
+            #[button(type="button", onclick="login()") Sign in] 
+        script(src="js/signupin.js")
