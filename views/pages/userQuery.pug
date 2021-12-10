@@ -3,10 +3,7 @@ html
         title Home Page
 
     body 
-        if user
-            include ../partials/userHeader
-        else
-            include ../partials/generalHeader
+        include ../partials/header
         p Name #[input#query(type="text")]
         button(type="button", onclick="submit()") Search
         h4 Users

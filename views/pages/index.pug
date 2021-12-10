@@ -2,13 +2,7 @@ html
     head 
         title Home Page
 
-    //- Decide whether to show a user's header or a general header
     body 
-        if user
-            include ../partials/userHeader
-            br
-            h2 Welcome #{user.username}
-        else
-            include ../partials/generalHeader
-            br
-            h2 Welcome to Home Page
+        include ../partials/header
+        br
+        h2 Welcome to Home Page

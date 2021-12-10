@@ -39,8 +39,6 @@ app.use(session({
 }));
 
 app.use(function(req, res, next) {
-    // res.send('Hello ' + JSON.stringify(req.session));
-    // console.log('Hello ' + JSON.stringify(req.sessionID));
     console.log("****************");
     console.log(req.method, req.url, "by", req.sessionID);
     console.log(loginStatus(req));
@@ -55,8 +53,9 @@ function loginStatus(req) {
     );
 }
 
-
-// **************** ROUTES ****************
+/******************************************************************************/
+/*                                 ROUTES                                     */  
+/******************************************************************************/
 // Expose session
 app.use(function(req, res, next){
     res.locals.user = req.session.user;
@@ -84,10 +83,8 @@ app.use("/registration", registrationRouter);   //registration router
 
     console.log(req.body);
     //return if already logged in
-    if(req.session.loggedin){
-		res.status(200).send("Already logged in.");
-		return;
-	}
+    if(req.session.loggedin) 
+        return res.status(200).send("Already logged in.");
 
     // Get user by username if exists
     let user = await req.app.locals.db.collection('users').findOne({
@@ -96,18 +93,15 @@ app.use("/registration", registrationRouter);   //registration router
 
     //return if account doesn't exist
     if (!user) {
-        res.status(404).send(`Account doesn't exist.`);
         console.log("no account");
-        return;
+        return res.status(404).send(`Account doesn't exist.`);
     }
 
-    //return if password typed is wrong
-    if (req.body.password !== user.password) {
-        res.status(400).send("Uh oh! Wrong password. Try again");
-        return;
-    }
+    //return if entered password is wrong
+    if (req.body.password !== user.password)
+        return res.status(400).send("Uh oh! Wrong password. Try again");
 
-    // All went well. add user to local session
+    // All went well. Add user to local session
     req.session.loggedIn = true;
     req.session.user = user;
     res.sendStatus(200);
