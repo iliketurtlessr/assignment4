@@ -35,7 +35,7 @@ app.use(session({
     secret: "The quick brown fox jumps over a lazy dog",
     store: store,
     resave: true,
-    saveUninitialized: true
+    saveUninitialized: false,
 }));
 
 app.use(function(req, res, next) {
@@ -48,7 +48,7 @@ function loginStatus(req) {
     return (
         "Login status: " + 
         (req.session.loggedIn
-            ? `${req.session.user.username} logged in`
+            ? `${req.session.userId.toString()} logged in`
             : "no one logged in")
     );
 }
@@ -57,13 +57,16 @@ function loginStatus(req) {
 /*                                 ROUTES                                     */  
 /******************************************************************************/
 // Expose session
-app.use(function(req, res, next){
-    res.locals.user = req.session.user;
+app.use(async function(req, res, next){
+    if (req.session.loggedIn)
+        res.locals.user = await req.app.locals.db.collection('users').findOne({
+            _id: req.session.userId
+        });
     next();
 });
 
 // Send Homepage
-app.get(["/", "/home", "/login"], (req, res)=> res.render("pages/index"));
+app.get(["/", "/home"], (req, res)=> res.render("pages/index"));
 
 // Login and logout routes
 app.post("/login", express.json(), login);
@@ -103,7 +106,7 @@ app.use("/registration", registrationRouter);   //registration router
 
     // All went well. Add user to local session
     req.session.loggedIn = true;
-    req.session.user = user;
+    req.session.userId = user._id;
     res.sendStatus(200);
 }
 
@@ -118,7 +121,7 @@ async function logout(req, res, next) {
 
     // Remove session data
     req.session.loggedIn = false;
-    req.session.user = undefined;
+    req.session.userId = undefined;
 
     // Redirect to home page
     res.redirect("/");
@@ -126,7 +129,6 @@ async function logout(req, res, next) {
 
 /**
  * Send order form
- * Couldn't think of a way to include this in ordersRouter
  */
 function sendOrderForm(req, res, next) {
     if (!req.session.loggedIn)

@@ -6,7 +6,7 @@ html
         include ../partials/header
         h3 Order Summary 
         br
-        p Owner: #{order.who}
+        p Ordered by: #{order.who}
         p Restaurant: #{order.restaurantName}
         ul
             each v, k in order.order

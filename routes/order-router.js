@@ -14,8 +14,7 @@ async function addOrder(req, res, next) {
 
     //link user's username to order
     let orderForm = req.body;
-    orderForm.who = req.session.user.username;
-    orderForm.userId = req.session.user._id;
+    orderForm.userId = req.session.userId;
     console.log(orderForm);
 
     // Add order to db and add it to user's orders array
@@ -23,12 +22,12 @@ async function addOrder(req, res, next) {
             .collection('orders')
             .insertOne(orderForm);
     
-    let user = await req.app.locals.db
+    await req.app.locals.db
             .collection("users")
             .findOneAndUpdate(
-                { username: req.session.user.username },
-                { "$push": {orders: order.insertedId}
-            });
+                { _id: req.session.userId },
+                { "$push": {orders: order.insertedId}}
+            );
     console.log(order);
     // Send the new order's Mongo ObjectId
     res.status(201).send(order.insertedId.toString());
@@ -40,10 +39,8 @@ async function addOrder(req, res, next) {
 async function getOrder(req, res, next) {
 
     // No user is logged in right now
-    if (!req.session.loggedIn) {
-        res.status(403).send("You need to login first");
-        return;
-    }
+    if (!req.session.loggedIn)
+        return res.status(403).send("You need to login first");
 
     //get order
     let oid, order;
@@ -56,29 +53,24 @@ async function getOrder(req, res, next) {
     order = await req.app.locals.db
             .collection("orders")
             .findOne({ "_id": oid });
-    if (!order) {
-        res.status(404).send(`No Order.`);
-        return;
-    }
+    if (!order) return res.status(404).send(`No Order.`);
 
     //get user
     let user = await req.app.locals.db
             .collection('users')
             .findOne({
-                username: order.who
+                _id: order.userId
             });
-    if (!user) {
-        res.status(404).send(`No account.`);
-        return;
-    }
+    if (!user) return res.status(404).send(`No account.`);
 
     //Return if acc is private
-    if (user.privacy && req.session.user.username !== user.username) {
+    if (user.privacy && req.session.userId.toString() !== user._id.toString()) {
         res.status(403).send("Forbidden. This isn't your order, sorry");
         return;
     }
 
     res.order = order;
+    res.order.who = user.username;
     next();
 }
 
