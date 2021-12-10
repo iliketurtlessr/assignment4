@@ -32,7 +32,7 @@ app.use(express.static("public"));
 app.use(express.static("public/images"));
 app.use(express.urlencoded({extended: true}));
 app.use(session({
-    secret: 'This is a secret',
+    secret: "The quick brown fox jumps over a lazy dog",
     store: store,
     resave: true,
     saveUninitialized: true
@@ -111,11 +111,10 @@ app.use("/registration", registrationRouter);   //registration router
  * Log out user
  */
 async function logout(req, res, next) {
-    if (!req.session.loggedIn) {
-        res.status(200)
+    if (!req.session.loggedIn)
+        return res
+            .status(200)
             .send("You aren't logged in yet.\nGo login first lol");
-        return;
-    }
 
     // Remove session data
     req.session.loggedIn = false;
@@ -130,10 +129,9 @@ async function logout(req, res, next) {
  * Couldn't think of a way to include this in ordersRouter
  */
 function sendOrderForm(req, res, next) {
-    if (!req.session.loggedIn) {
-        res.status(403).send("You need to login first.");
-        return;
-    }
+    if (!req.session.loggedIn)
+        return res.status(403).send("You need to login first.");
+    
     res.render("pages/orderform");
 }
 

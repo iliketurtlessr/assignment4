@@ -17,13 +17,12 @@ html
         if ownPage
             - let p = (user.privacy? 'Private': 'Public');
             p Current privacy setting: #{p}
-            input#private(type="radio", name="user_privacy") 
+            input#private(type="radio", name="user_privacy", checked=user.privacy) 
             label(for="private") Private
-            input#public(type="radio", name="user_privacy") 
+            input#public(type="radio", name="user_privacy", checked=!user.privacy) 
             label(for="public") Public
+            br
             br
             button(type="submit", onclick="update()") Save
     
-    script!= `const user = ${JSON.stringify(user)};`
-    script!= `const ownPage = ${JSON.stringify(ownPage)};`
     script(src="../js/user.js") 

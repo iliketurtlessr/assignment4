@@ -1,9 +1,3 @@
-console.log(ownPage);
-// display user's privacy if viewing their own profile
-if (ownPage) {
-    if (user.privacy) document.getElementById('private').checked = true;
-    else document.getElementById('public').checked = true;
-}
 function update() {
 
     // Get user's preference of privacy is selected
