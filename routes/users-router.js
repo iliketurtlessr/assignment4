@@ -45,9 +45,6 @@ function sendUsers(req, res, next) {
  * Get user from database, if exists
  */
 async function getUser(req, res, next) {
-    // No user is logged in right now
-    if (!req.session.loggedIn) 
-        return res.status(403).send("You need to login first");
 
     // Try getting user
     let uid, user;
@@ -70,26 +67,25 @@ async function getUser(req, res, next) {
  * Set parameters according to who is viewing this user
  */
 async function questionUser(req, res, next) {
-    // We can assume that a user is currently logged in
     let user = res.requestedUser;
 
-    // User wants to view their own profile
-    if (req.session.userId.toString() === user._id.toString()) {
-        res.ownPage = true;
-        next();
-    }
-
-    if (user.privacy) {
-        if (req.session.userId.toString() !== user._id.toString()) {
-            //the current user is not the holder of acc requested
-            res.status(403).send("Sorry, can't view this user. "+ 
-                "They have set their profile to private");
-            return;
+    if (req.session.loggedIn) {
+        // User wants to view their own profile
+        if (req.session.userId.toString() === user._id.toString()) {
+            res.ownPage = true;
+            next();
         }
-    } else {
-        //send basic user info with order history
-        res.ownPage = false;
-        next();
+    }
+    else {
+        if (user.privacy) {
+            //the current user is not the holder of acc requested
+            return res.status(403).send("Sorry, can't view this user. "+ 
+                "They have set their profile to private");
+        } else {
+            //send basic user info with order history
+            res.ownPage = false;
+            next();
+        }
     }
 }
 
