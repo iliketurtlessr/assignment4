@@ -1,6 +1,8 @@
 Name: Siddharth Reddy Busreddy
 Student Id: 101211997
 
+This project uses sessions.
+
 Everything works well.
 
 Steps to run server:
