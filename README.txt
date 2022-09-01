@@ -1,7 +1,7 @@
 Name: Siddharth Reddy Busreddy
 Student Id: 101211997
 
-This project uses sessions.
+This project implements sessions.
 
 Everything works well.
 
